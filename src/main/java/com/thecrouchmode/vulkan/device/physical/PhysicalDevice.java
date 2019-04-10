@@ -26,13 +26,6 @@ public class PhysicalDevice {
 
         queueFamilies = initQueueFamilies();
 
-        /*
-        VkDeviceQueueCreateInfo indices = VkDeviceQueueCreateInfo.malloc()
-                .sType(VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO)
-                .queueFamilyIndex();
-
-        */
-
     }
 
     private ArrayList<QueueFamily> initQueueFamilies() {
