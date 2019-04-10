@@ -13,7 +13,7 @@ public class PhysicalDevice {
     private final VkPhysicalDeviceProperties properties;
     private final VkPhysicalDeviceFeatures features;
     private final ArrayList<QueueFamily> queueFamilies;
-    VkPhysicalDevice device;
+    public VkPhysicalDevice device;
 
     public PhysicalDevice(VkPhysicalDevice device) {
         this.device = device;
