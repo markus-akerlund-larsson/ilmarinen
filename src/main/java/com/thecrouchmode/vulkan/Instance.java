@@ -22,9 +22,7 @@ public class Instance {
         instance = createInstance();
     }
 
-    private List<PhysicalDevice> physicalDevices() {
-        int[] count = {0};
-        vkEnumeratePhysicalDevices(instance,  count, null);
+    public List<PhysicalDevice> physicalDevices() {
         try(var stack = MemoryStack.stackPush()) {
             var db = Util.vulkanGetCount(instance, VK10::vkEnumeratePhysicalDevices, stack::mallocPointer);
             return Util.mapPointer(db, this::getDevice);
@@ -71,7 +69,8 @@ public class Instance {
 
             System.out.println("enabled extensions count: "+createInfo.enabledExtensionCount());
 
-            PointerBuffer pp = MemoryUtil.memAllocPointer(1);
+
+            PointerBuffer pp = stack.pointers(1);
 
             var result = vkCreateInstance(createInfo, null, pp);
 
@@ -80,10 +79,6 @@ public class Instance {
 
             return new VkInstance(pp.get(0), createInfo);
         }
-
-
-
-
     }
 
     public void destroy() {
