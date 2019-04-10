@@ -17,4 +17,9 @@ public class QueueFamily {
         computeBit = (properties.queueFlags() & VK_QUEUE_COMPUTE_BIT) != 0;
 
     }
+
+    @Override
+    public String toString() {
+        return "index: "+index+" graphics: "+graphicsBit+", compute: "+computeBit;
+    }
 }
