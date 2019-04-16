@@ -32,6 +32,15 @@ public class Instance {
         }
     }
 
+    public static List<VkLayerProperties> avaliableLayers() {
+        try(var stack = MemoryStack.stackPush()) {
+            VkLayerProperties.Buffer layerProperties = Util.vulkanGetCount(VK10::vkEnumerateInstanceLayerProperties, VkLayerProperties::calloc);
+
+            var layers = new ArrayList<VkLayerProperties>(layerProperties.capacity());
+            layerProperties.forEach(layers::add);
+            return layers;
+        }
+    }
 
     private static List<VkExtensionProperties> avaliableExtensions() {
         try(var stack = MemoryStack.stackPush()) {
@@ -47,10 +56,6 @@ public class Instance {
 
     private void createInstance() {
         try(var stack = MemoryStack.stackPush()) {
-
-            VkLayerProperties.Buffer layerProperties = Util.vulkanGetCount(VK10::vkEnumerateInstanceLayerProperties, VkLayerProperties::calloc);
-
-            layerProperties.forEach(l->System.out.println(l.layerNameString()));
 
             PointerBuffer glfwRequiredExtensions = GLFWVulkan.glfwGetRequiredInstanceExtensions();
 
