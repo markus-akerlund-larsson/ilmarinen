@@ -54,6 +54,10 @@ public class LogicalDevice {
 
     }
 
+    public List<GraphicsQueue> queues() {
+        return queues;
+    }
+
     public void destroy() {
         vkDestroyDevice(device, null);
     }
