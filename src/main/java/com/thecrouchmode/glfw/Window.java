@@ -4,7 +4,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class Window {
 
-    private final long id;
+    public final long id;
 
     public Window(int width, int height, String title) {
         GLFW.glfwWindowHint(GLFW.GLFW_CLIENT_API, GLFW.GLFW_NO_API);
