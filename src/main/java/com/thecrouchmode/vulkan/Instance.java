@@ -42,7 +42,7 @@ public class Instance {
         }
     }
 
-    private static List<VkExtensionProperties> avaliableExtensions() {
+    public static List<VkExtensionProperties> avaliableExtensions() {
         try(var stack = MemoryStack.stackPush()) {
             var extensions = Util.vulkanGetCount(
                     (String)null,
