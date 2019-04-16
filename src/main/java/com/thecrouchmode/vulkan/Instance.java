@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.VK_SUCCESS;
 public class Instance {
 
     public List<String> extensions = new ArrayList<>();
-    private VkInstance instance;
+    public VkInstance instance;
 
     public Instance() {
         createInstance();
