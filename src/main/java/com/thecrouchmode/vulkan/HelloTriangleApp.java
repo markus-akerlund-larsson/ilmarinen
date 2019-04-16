@@ -40,7 +40,7 @@ public class HelloTriangleApp {
                 .filter(q->q.graphicsBit)
                 .limit(1)
                 .collect(Collectors.toList());
-        LogicalDevice logicalDevice = new LogicalDevice(physicalDevice, qfs, instance.enabledExtensions);
+        LogicalDevice logicalDevice = new LogicalDevice(physicalDevice, qfs, instance.extensions);
 
     }
 

@@ -11,7 +11,7 @@ import java.util.List;
 public class LogicalDevice {
     VkDevice device;
 
-    public LogicalDevice(PhysicalDevice pd, List<QueueFamily> queueFamilies, PointerBuffer extensions) {
+    public LogicalDevice(PhysicalDevice pd, List<QueueFamily> queueFamilies, List<String> extensions) {
         try(var stack = MemoryStack.stackPush()) {
             VkDeviceCreateInfo deviceCreateInfo = VkDeviceCreateInfo.callocStack(stack);
 
@@ -21,6 +21,10 @@ public class LogicalDevice {
                 queues.put(qf.createInfo(stack));
             }}
 
+            var enabledExtensions = stack.mallocPointer(extensions.size());
+            extensions.forEach(s->enabledExtensions.put(stack.UTF8(s)));
+            enabledExtensions.flip();
+
             PointerBuffer layers = stack.callocPointer(1);
             //layers.put(stack.UTF8("VK_LAYER_LUNARG_standard_validation"));
             deviceCreateInfo
@@ -28,7 +32,7 @@ public class LogicalDevice {
                     .pQueueCreateInfos(queues)
                     .pEnabledFeatures(VkPhysicalDeviceFeatures.mallocStack(stack))
                     //.ppEnabledLayerNames(layers.flip())
-                    .ppEnabledExtensionNames(extensions);
+                    .ppEnabledExtensionNames(enabledExtensions);
 
             PointerBuffer pointer = stack.pointers(1);
             int res = VK10.vkCreateDevice(pd.device, deviceCreateInfo, null, pointer);

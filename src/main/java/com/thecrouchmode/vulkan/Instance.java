@@ -17,7 +17,7 @@ import static org.lwjgl.vulkan.VK10.VK_SUCCESS;
 
 public class Instance {
 
-    public PointerBuffer enabledExtensions;
+    public List<String> extensions = new ArrayList<>();
     private VkInstance instance;
 
     public Instance() {
@@ -53,13 +53,12 @@ public class Instance {
             layerProperties.forEach(l->System.out.println(l.layerNameString()));
 
             PointerBuffer glfwRequiredExtensions = GLFWVulkan.glfwGetRequiredInstanceExtensions();
-            avaliableExtensions().forEach(e-> System.out.println("Existing "+e.extensionNameString()));
 
-            System.out.println("GLFW Required extensions: "+glfwRequiredExtensions.capacity());
-
-            enabledExtensions = MemoryUtil.memAllocPointer(glfwRequiredExtensions.capacity()+1);
+            var enabledExtensions = stack.mallocPointer(glfwRequiredExtensions.capacity()+1);
             enabledExtensions.put(stack.UTF8(VK_EXT_DEBUG_REPORT_EXTENSION_NAME));
             enabledExtensions.put(glfwRequiredExtensions);
+            Util.forEachPointer(glfwRequiredExtensions, e->extensions.add(MemoryUtil.memUTF8(e)));
+            extensions.add(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
             enabledExtensions.flip();
             //Util.forEachPointer(glfwRequiredExtensions, enabledExtensions::put);
 
@@ -111,7 +110,8 @@ public class Instance {
     private void setupDebugging() {
         final VkDebugReportCallbackEXT debugCallback = new VkDebugReportCallbackEXT() {
             public int invoke(int flags, int objectType, long object, long location, int messageCode, long pLayerPrefix, long pMessage, long pUserData) {
-                System.err.println("ERROR OCCURED: " + VkDebugReportCallbackEXT.getString(pMessage));
+                System.err.println("ERROR: "+VkDebugReportCallbackEXT.getString(pLayerPrefix));
+                System.err.println('\t'+VkDebugReportCallbackEXT.getString(pMessage));
                 return 0;
             }
         };
@@ -132,7 +132,6 @@ public class Instance {
     }
 
     public void destroy() {
-        enabledExtensions.free();
         vkDestroyInstance(instance, null);
     }
 
