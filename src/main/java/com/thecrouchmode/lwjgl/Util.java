@@ -27,18 +27,32 @@ public class Util {
         }
     }
 
-    public interface VulkanCountedQuery <P, B> {
+    public interface VulkanCountedPQuery<P, B> {
 
         public void get(P pointer, int[] count, B buffer);
     }
 
+    public interface VulkanCountedQuery <B> {
+
+        public void get(int[] count, B buffer);
+    }
 
 
-    public static <P, B> B vulkanGetCount(P pointer, VulkanCountedQuery<P, B> q, IntFunction<B> allocator) {
+
+    public static <P, B> B vulkanGetCount(P pointer, VulkanCountedPQuery<P, B> q, IntFunction<B> allocator) {
         int[] count = {0};
         q.get(pointer, count, null);
         var buffer = allocator.apply(count[0]);
         q.get(pointer, count, buffer);
+
+        return buffer;
+    }
+
+    public static <B> B vulkanGetCount(VulkanCountedQuery<B> q, IntFunction<B> allocator) {
+        int[] count = {0};
+        q.get(count, null);
+        var buffer = allocator.apply(count[0]);
+        q.get(count, buffer);
 
         return buffer;
     }
