@@ -65,19 +65,8 @@ public class Instance {
             Util.forEachPointer(glfwRequiredExtensions, e->extensions.add(MemoryUtil.memUTF8(e)));
             extensions.add(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
             enabledExtensions.flip();
-            //Util.forEachPointer(glfwRequiredExtensions, enabledExtensions::put);
-
-
-
-            Util.forEachPointer(glfwRequiredExtensions,
-                    e->System.out.println("glfw required Extensions: "+MemoryUtil.memUTF8(e)));
-            Util.forEachPointer(enabledExtensions,
-                    e->System.out.println("requested Extensions: "+MemoryUtil.memUTF8(e)));
-
-
 
             var appInfo = VkApplicationInfo.mallocStack(stack);
-            System.out.println(VK.getInstanceVersionSupported());
             appInfo
                     .sType(VK_STRUCTURE_TYPE_APPLICATION_INFO)
                     .pNext(0)
@@ -96,10 +85,6 @@ public class Instance {
             createInfo.pApplicationInfo(appInfo);
             createInfo.ppEnabledExtensionNames(enabledExtensions);
             createInfo.ppEnabledLayerNames(layers.flip());
-
-            System.out.println("ename: "+createInfo.ppEnabledExtensionNames());
-            Util.forEachPointer(createInfo.ppEnabledExtensionNames(),
-                    e->System.out.println("enabled Extensions: "+MemoryUtil.memUTF8(e)));
 
             PointerBuffer handle = stack.pointers(1);
 
