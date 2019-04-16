@@ -48,8 +48,10 @@ public class HelloTriangleApp {
                 .filter(q->q.graphicsBit)
                 .limit(1)
                 .collect(Collectors.toList());
+
+        qfs.forEach(System.out::println);
         ArrayList<String> ext = new ArrayList<>();
-        ext.add("VK_KHR_swapchain");
+        //ext.add("VK_KHR_swapchain");
         logicalDevice = new LogicalDevice(physicalDevice, qfs, ext);
 
     }
