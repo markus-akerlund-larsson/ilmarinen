@@ -28,6 +28,10 @@ public class PhysicalDevice {
 
     }
 
+    public ArrayList<QueueFamily> queueFamilies() {
+        return queueFamilies;
+    }
+
     private ArrayList<QueueFamily> initQueueFamilies() {
 
         try(var stack = MemoryStack.stackPush()) {
@@ -43,6 +47,11 @@ public class PhysicalDevice {
             }
             return queueFamilies;
         }
+    }
+
+    @Override
+    public String toString() {
+        return properties.deviceID()+"; "+properties.deviceNameString()+"; "+properties.apiVersion();
     }
 
     public void destroy() {
