@@ -6,6 +6,7 @@ import com.thecrouchmode.vulkan.device.physical.PhysicalDevice;
 import com.thecrouchmode.vulkan.device.physical.QueueFamily;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,7 @@ public class HelloTriangleApp {
 
     private Instance instance;
     private Window window;
+    private LogicalDevice logicalDevice;
 
     public void run() {
         initWindow();
@@ -32,15 +34,23 @@ public class HelloTriangleApp {
     private void initVulkan() {
         instance = new Instance();
 
+        instance.physicalDevices().forEach(System.out::println);
+
         PhysicalDevice physicalDevice = instance.physicalDevices().get(0);
+        System.out.println("Avaliable extensions:");
+        Instance.avaliableExtensions().forEach(e->System.out.println(e.extensionNameString()));
+
+        System.out.println("Avaliable queues:");
+        physicalDevice.queueFamilies().forEach(System.out::println);
 
         List<QueueFamily> qfs = physicalDevice.queueFamilies()
                 .stream()
-                .peek(qf-> System.out.println("Queue family: "+qf))
                 .filter(q->q.graphicsBit)
                 .limit(1)
                 .collect(Collectors.toList());
-        LogicalDevice logicalDevice = new LogicalDevice(physicalDevice, qfs, instance.extensions);
+        ArrayList<String> ext = new ArrayList<>();
+        ext.add("VK_KHR_swapchain");
+        logicalDevice = new LogicalDevice(physicalDevice, qfs, ext);
 
     }
 
@@ -53,10 +63,9 @@ public class HelloTriangleApp {
     }
 
     private void cleanup() {
-
-
-        window.destroy();
+        logicalDevice.destroy();
         instance.destroy();
+        window.destroy();
         GLFW.glfwTerminate();
 
     }

@@ -41,4 +41,8 @@ public class LogicalDevice {
         }
 
     }
+
+    public void destroy() {
+        VK10.vkDestroyDevice(device, null);
+    }
 }
