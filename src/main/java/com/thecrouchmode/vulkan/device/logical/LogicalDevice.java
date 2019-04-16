@@ -20,6 +20,7 @@ public class LogicalDevice {
             for(QueueFamily qf : queueFamilies) {{
                 queues.put(qf.createInfo(stack));
             }}
+            queues.flip();
 
             var enabledExtensions = stack.mallocPointer(extensions.size());
             extensions.forEach(s->enabledExtensions.put(stack.UTF8(s)));
