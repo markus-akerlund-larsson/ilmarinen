@@ -1,5 +1,6 @@
 package com.thecrouchmode.vulkan.device.physical;
 
+import com.thecrouchmode.vulkan.Surface;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 import com.thecrouchmode.lwjgl.Util;
@@ -12,7 +13,6 @@ public class PhysicalDevice {
 
     private final VkPhysicalDeviceProperties properties;
     private final VkPhysicalDeviceFeatures features;
-    private final ArrayList<QueueFamily> queueFamilies;
     public VkPhysicalDevice device;
 
     public PhysicalDevice(VkPhysicalDevice device) {
@@ -24,15 +24,13 @@ public class PhysicalDevice {
         vkGetPhysicalDeviceFeatures(device, features);
         vkGetPhysicalDeviceProperties(device, properties);
 
-        queueFamilies = initQueueFamilies();
-
     }
 
-    public ArrayList<QueueFamily> queueFamilies() {
-        return queueFamilies;
+    public ArrayList<QueueFamily> queueFamilies(Surface surface) {
+        return initQueueFamilies(surface);
     }
 
-    private ArrayList<QueueFamily> initQueueFamilies() {
+    private ArrayList<QueueFamily> initQueueFamilies(Surface surface) {
 
         try(var stack = MemoryStack.stackPush()) {
             var properties = Util.vulkanGetCount(
@@ -43,7 +41,7 @@ public class PhysicalDevice {
             ArrayList<QueueFamily> queueFamilies = new ArrayList<>(properties.capacity());
             for(int i = 0; i < properties.capacity(); ++i) {
 
-                queueFamilies.add(new QueueFamily(i, properties.get(i)));
+                queueFamilies.add(new QueueFamily(i, properties.get(i), device, surface));
             }
             return queueFamilies;
         }

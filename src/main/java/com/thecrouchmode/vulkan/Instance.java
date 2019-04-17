@@ -25,7 +25,7 @@ public class Instance {
         setupDebugging();
     }
 
-    public List<PhysicalDevice> physicalDevices() {
+    public List<PhysicalDevice> physicalDevices(Surface surface) {
         try(var stack = MemoryStack.stackPush()) {
             var db = Util.vulkanGetCount(instance, VK10::vkEnumeratePhysicalDevices, stack::mallocPointer);
             return Util.mapPointer(db, this::getDevice);

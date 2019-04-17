@@ -1,5 +1,6 @@
 package com.thecrouchmode.vulkan.device.physical;
 
+import com.thecrouchmode.vulkan.Surface;
 import com.thecrouchmode.vulkan.device.logical.GraphicsQueue;
 import com.thecrouchmode.vulkan.device.logical.LogicalDevice;
 import org.lwjgl.system.MemoryStack;
@@ -17,14 +18,17 @@ public class QueueFamily {
     public final int index;
     public final boolean graphicsBit;
     public final boolean computeBit;
+    public final boolean surfaceSupport;
     public float priority = 1;
     private int count = 1;
 
-    QueueFamily(int index, VkQueueFamilyProperties properties) {
+    QueueFamily(int index, VkQueueFamilyProperties properties, VkPhysicalDevice device, Surface surface) {
         this.index = index;
         graphicsBit = (properties.queueFlags() & VK_QUEUE_GRAPHICS_BIT) != 0;
         computeBit = (properties.queueFlags() & VK_QUEUE_COMPUTE_BIT) != 0;
 
+
+        surfaceSupport = surface.supported(this, device);
     }
 
     public VkDeviceQueueCreateInfo createInfo(MemoryStack stack) {
@@ -54,6 +58,6 @@ public class QueueFamily {
 
     @Override
     public String toString() {
-        return "index: "+index+" graphics: "+graphicsBit+", compute: "+computeBit;
+        return "index: "+index+" graphics: "+graphicsBit+", compute: "+computeBit+", surface "+surfaceSupport;
     }
 }

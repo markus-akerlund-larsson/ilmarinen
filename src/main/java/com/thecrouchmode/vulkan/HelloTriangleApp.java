@@ -16,6 +16,7 @@ public class HelloTriangleApp {
     private Instance instance;
     private Window window;
     private LogicalDevice logicalDevice;
+    private Surface surface;
 
     public void run() {
         initWindow();
@@ -34,16 +35,18 @@ public class HelloTriangleApp {
     private void initVulkan() {
         instance = new Instance();
 
-        instance.physicalDevices().forEach(System.out::println);
+        instance.physicalDevices(surface).forEach(System.out::println);
 
-        PhysicalDevice physicalDevice = instance.physicalDevices().get(0);
+        surface = new Surface(window, instance);
+
+        PhysicalDevice physicalDevice = instance.physicalDevices(surface).get(0);
         System.out.println("Avaliable extensions:");
         Instance.avaliableExtensions().forEach(e->System.out.println(e.extensionNameString()));
 
         System.out.println("Avaliable queues:");
-        physicalDevice.queueFamilies().forEach(System.out::println);
+        physicalDevice.queueFamilies(surface).forEach(System.out::println);
 
-        List<QueueFamily> qfs = physicalDevice.queueFamilies()
+        List<QueueFamily> qfs = physicalDevice.queueFamilies(surface)
                 .stream()
                 .filter(q->q.graphicsBit)
                 .limit(1)
@@ -53,6 +56,7 @@ public class HelloTriangleApp {
         ArrayList<String> ext = new ArrayList<>();
         //ext.add("VK_KHR_swapchain");
         logicalDevice = new LogicalDevice(physicalDevice, qfs, ext);
+
 
     }
 
