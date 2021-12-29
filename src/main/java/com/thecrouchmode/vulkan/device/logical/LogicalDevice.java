@@ -32,10 +32,13 @@ public class LogicalDevice {
 
             PointerBuffer layers = stack.callocPointer(1);
             //layers.put(stack.UTF8("VK_LAYER_LUNARG_standard_validation"));
+            var features = VkPhysicalDeviceFeatures.mallocStack(stack);
+
+            //TODO set a bunch of stuff features on or off
             deviceCreateInfo
                     .sType(VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO)
                     .pQueueCreateInfos(queueInfos)
-                    .pEnabledFeatures(VkPhysicalDeviceFeatures.mallocStack(stack))
+                    .pEnabledFeatures(features)
                     //.ppEnabledLayerNames(layers.flip())
                     .ppEnabledExtensionNames(enabledExtensions);
 
