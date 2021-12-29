@@ -20,8 +20,8 @@ public class Instance {
     public List<String> extensions = new ArrayList<>();
     public VkInstance instance;
 
-    public Instance() {
-        createInstance();
+    public Instance(String[] layers) {
+        createInstance(layers);
         setupDebugging();
     }
 
@@ -54,7 +54,7 @@ public class Instance {
         }
     }
 
-    private void createInstance() {
+    private void createInstance(String[] layers) {
         try(var stack = MemoryStack.stackPush()) {
 
             PointerBuffer glfwRequiredExtensions = GLFWVulkan.glfwGetRequiredInstanceExtensions();
@@ -78,21 +78,23 @@ public class Instance {
 
             var createInfo = VkInstanceCreateInfo.calloc();
 
-            PointerBuffer layers = stack.callocPointer(1);
-            layers.put(stack.UTF8("VK_LAYER_LUNARG_standard_validation"));
+
+
+
+            PointerBuffer layerBuffer = stack.callocPointer(layers.length);
+            for(var layer : layers) {
+                layerBuffer.put(stack.UTF8(layer));
+            }
+
             createInfo.sType(VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO);
             createInfo.pNext(0);
             createInfo.pApplicationInfo(appInfo);
             createInfo.ppEnabledExtensionNames(enabledExtensions);
-            createInfo.ppEnabledLayerNames(layers.flip());
+            createInfo.ppEnabledLayerNames(layerBuffer.flip());
 
             PointerBuffer handle = stack.pointers(1);
-
             var result = vkCreateInstance(createInfo, null, handle);
-
-
-            System.out.println(result == VK_SUCCESS);
-
+            if(result != VK_SUCCESS) throw new RuntimeException(Util.translateVulkanResult(result));
             instance = new VkInstance(handle.get(0), createInfo);
         }
     }

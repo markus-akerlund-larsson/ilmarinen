@@ -5,6 +5,7 @@ import com.thecrouchmode.vulkan.device.logical.LogicalDevice;
 import com.thecrouchmode.vulkan.device.physical.PhysicalDevice;
 import com.thecrouchmode.vulkan.device.physical.QueueFamily;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.vulkan.VkLayerProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,23 +29,32 @@ public class HelloTriangleApp {
     private void initWindow() {
         GLFW.glfwInit();
         window = new Window(800, 600, "Vulkan");
-
     }
 
 
     private void initVulkan() {
-        instance = new Instance();
+        instance = new Instance(new String[]{"VK_LAYER_KHRONOS_validation"});
 
+        System.out.println("Physical devices:");
         instance.physicalDevices(surface).forEach(System.out::println);
+        System.out.println();
 
         surface = new Surface(window, instance);
 
         PhysicalDevice physicalDevice = instance.physicalDevices(surface).get(0);
         System.out.println("Avaliable extensions:");
         Instance.avaliableExtensions().forEach(e->System.out.println(e.extensionNameString()));
+        System.out.println();
+
+        System.out.println("Avaliable layers:");
+        Instance.avaliableLayers().stream()
+                .map(VkLayerProperties::layerNameString)
+                .forEach(System.out::println);
+        System.out.println();
 
         System.out.println("Avaliable queues:");
         physicalDevice.queueFamilies(surface).forEach(System.out::println);
+        System.out.println();
 
         List<QueueFamily> qfs = physicalDevice.queueFamilies(surface)
                 .stream()
@@ -57,7 +67,6 @@ public class HelloTriangleApp {
         //ext.add("VK_KHR_swapchain");
         logicalDevice = new LogicalDevice(physicalDevice, qfs, ext);
 
-
     }
 
     private void mainLoop() {
@@ -69,7 +78,7 @@ public class HelloTriangleApp {
     }
 
     private void cleanup() {
-        logicalDevice.destroy();
+        //logicalDevice.destroy();
         instance.destroy();
         window.destroy();
         GLFW.glfwTerminate();
