@@ -27,7 +27,6 @@ public class Surface {
     public boolean supported(QueueFamily queueFamily, VkPhysicalDevice device) {
         int[] support = {0};
         KHRSurface.vkGetPhysicalDeviceSurfaceSupportKHR(device, queueFamily.index, surface, support);
-
         return VK10.VK_FALSE != support[0];
     }
 }
